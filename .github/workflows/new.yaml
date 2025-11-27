@@ -26,9 +26,6 @@ jobs:
       - name: Make directory for results
         run: mkdir -p testResults
 
-      - name: Run Server
-        run: npm run tern-on-api
-
       - name: Run Postman collection
         run: |
           newman run petstore.collection.json \
