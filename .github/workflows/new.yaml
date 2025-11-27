@@ -1,0 +1,43 @@
+name: Test-build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: "12.x"
+
+      - name: Install Newman
+        run: |
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
+
+      - name: Make directory for results
+        run: mkdir -p testResults
+
+      - name: Run Server
+        run: npm run tern-on-api
+
+      - name: Run Postman collection
+        run: |
+          newman run petstore.collection.json \
+            -r htmlextra \
+            --reporter-htmlextra-export testResults/htmlreport.html \
+            --reporter-htmlextra-darkTheme > testResults/runreport1.html
+
+      - name: Output the run Details
+        uses: actions/upload-artifact@v2
+        with:
+          name: Runreports
+          path: testResults
