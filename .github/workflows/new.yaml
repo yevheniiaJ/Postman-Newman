@@ -31,10 +31,15 @@ jobs:
           newman run petstore.collection.json
             -r htmlextra 
             --reporter-htmlextra-export testResults/htmlreport.html 
-            --reporter-htmlextra-darkTheme > testResults/runreport1.html
+            --reporter-htmlextra-darkTheme > testResults/runreport1.html || true
 
       - name: Output the run Details
         uses: actions/upload-artifact@v4
         with:
           name: Runreports
           path: testResults
+      - name: Publish report to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./newman-report
