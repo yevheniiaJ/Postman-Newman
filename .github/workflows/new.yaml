@@ -29,16 +29,18 @@ jobs:
       - name: Run Postman collection
         continue-on-error: true
         run: |
-          newman run petstore.collection.json
-            -r htmlextra 
-            --reporter-htmlextra-export testResults/htmlreport.html 
-            --reporter-htmlextra-darkTheme > testResults/runreport1.html || true
+          mkdir -p newman-report
+          newman run petstore.collection.json \
+            -r htmlextra \
+            --reporter-htmlextra-export newman-report/index.html \
+            --reporter-htmlextra-darkTheme
 
       - name: Output the run Details
         uses: actions/upload-artifact@v4
         with:
           name: Runreports
-          path: testResults
+          path: newman-report
+
       - name: Publish report to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
