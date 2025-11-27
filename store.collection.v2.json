@@ -221,7 +221,7 @@
 					"response": []
 				},
 				{
-					"name": "List products Copy",
+					"name": "List products. Pagination",
 					"event": [
 						{
 							"listen": "test",
@@ -316,6 +316,109 @@
 								{
 									"key": "size",
 									"value": "4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List products. Sorting DSC",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"const schema = {\r",
+									"  \"$schema\": \"http://json-schema.org/draft-07/schema#\",\r",
+									"  \"title\": \"Generated schema for Root\",\r",
+									"  \"type\": \"array\",\r",
+									"  \"items\": {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"      \"id\": {\r",
+									"        \"type\": \"number\"\r",
+									"      },\r",
+									"      \"name\": {\r",
+									"        \"type\": \"string\"\r",
+									"      },\r",
+									"      \"price\": {\r",
+									"        \"type\": \"number\"\r",
+									"      },\r",
+									"      \"sku\": {\r",
+									"        \"type\": \"number\"\r",
+									"      },\r",
+									"      \"description\": {\r",
+									"        \"type\": \"string\"\r",
+									"      }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"      \"id\",\r",
+									"      \"name\",\r",
+									"      \"price\",\r",
+									"      \"sku\",\r",
+									"      \"description\"\r",
+									"    ]\r",
+									"  }\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test('Response matches jsonSchema', () => {\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									"\r",
+									"let json = pm.response.json();\r",
+									"let expected = pm.collectionVariables.get(\"productId\");\r",
+									"\r",
+									"pm.test(\"Array contains an element with expected id\", function () {\r",
+									"    const hasId = json.some(item => item.id.toString() === expected.toString());\r",
+									"    pm.expect(hasId).to.be.true;\r",
+									"});\r",
+									"\r",
+									"let data = pm.response.json();\r",
+									"\r",
+									"pm.test(\"List is sorted in ASC order\", function () {\r",
+									"    let sorted = [...data].sort((a, b) => a.id - b.id);\r",
+									"\r",
+									"    pm.expect(data).to.eql(sorted);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/products?sortOrder=ASC&sortKey=name",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "sortOrder",
+									"value": "ASC"
+								},
+								{
+									"key": "sortKey",
+									"value": "name"
 								}
 							]
 						}
